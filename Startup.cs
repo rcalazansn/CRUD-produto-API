@@ -64,6 +64,8 @@ namespace backend
             else
                 app.UseHsts();
 
+			InitializeDatabase(app);
+			
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
@@ -78,6 +80,18 @@ namespace backend
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+		
+		private void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                var db = services.GetRequiredService<ProdutoContext>();
+                
+				db.Database.Migrate();
+            }
         }
     }
 }
